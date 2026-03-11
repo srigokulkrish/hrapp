@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ramel HR — Style Guide & Usage Instructions</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="style.css" rel="stylesheet"/>
+  <style>
+    pre { background:#F5F5F5; border:1px solid #E5E7EB; border-radius:8px; padding:14px; font-size:13px; color:#1A1A2E; }
+    .demo-block { margin-bottom:32px; }
+    .demo-block h5 { font-weight:700; margin-bottom:10px; border-bottom:2px solid #E8451A; display:inline-block; padding-bottom:4px; color:#1A1A2E; }
+    .guide-sidebar { position:sticky; top:20px; }
+
+    /* ── Legibility overrides ── */
+    body, p, li, td, th { color: #1A1A2E; }
+
+    /* Muted text — darkened so it's always readable on white/light backgrounds */
+    .text-muted-ramel,
+    .text-muted,
+    [class*="text-muted"] { color: #4B5563 !important; }
+    .text-secondary-ramel  { color: #374151 !important; }
+
+    /* Card internals */
+    .card-label            { color: #4B5563 !important; }
+    .upload-hint,
+    .upload-types          { color: #4B5563 !important; }
+    .notif-time            { color: #4B5563 !important; }
+    .tm-role               { color: #4B5563 !important; }
+    .breadcrumb-ramel      { color: #4B5563 !important; }
+    .sidebar-footer        { color: #4B5563 !important; }
+    .sidebar-menu-label    { color: #4B5563 !important; }
+    .punch-info            { color: #4B5563 !important; }
+    .badge-optional        { color: #4B5563 !important; }
+    .file-size             { color: #4B5563 !important; }
+    .welcome-sub           { color: #4B5563 !important; }
+    .lp-sub                { color: rgba(255,255,255,0.85) !important; }
+
+    /* Sidebar guide nav */
+    .guide-sidebar nav a   { color: #374151; font-size:14px; padding:4px 0; display:block; }
+    .guide-sidebar nav a:hover { color: #E8451A; }
+
+    /* Inputs should show dark text */
+    .form-control-ramel,
+    .input-ramel           { color: #1A1A2E; }
+  </style>
+</head>
+<body style="background:#F5F5F5; font-family:'Inter',sans-serif;">
+
+<div class="container-fluid py-4 px-4">
+  <div class="row">
+
+    <!-- TOC -->
+    <div class="col-lg-3">
+      <div class="card-ramel guide-sidebar">
+        <div class="section-title">📋 Contents</div>
+        <nav class="d-flex flex-column gap-1">
+          <a href="#setup">1. Setup</a>
+          <a href="#layout">2. Layout</a>
+          <a href="#buttons">3. Buttons</a>
+          <a href="#forms">4. Forms</a>
+          <a href="#cards">5. Cards</a>
+          <a href="#badges">6. Badges</a>
+          <a href="#tables">7. Tables</a>
+          <a href="#modals">8. Modals</a>
+          <a href="#components">9. Components</a>
+          <a href="#utils">10. Utilities</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="col-lg-9">
+
+      <h1 class="page-title mb-1">Ramel HR — Style Guide</h1>
+      <p class="text-secondary-ramel mb-4" style="color:#4B5563;">Bootstrap 5 + style.css usage reference</p>
+
+      <!-- 1. SETUP -->
+      <section id="setup" class="card-ramel demo-block">
+        <h5>1. Setup</h5>
+        <p>Add these two lines in your HTML <code>&lt;head&gt;</code>, in this order:</p>
+        <pre>&lt;!-- 1. Bootstrap 5 CSS --&gt;
+&lt;link href="https://cdn.jsdelivr.net/npm/<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d6b4b9b9a2a5a2a4b7a696e3f8e5f8e5">[email&#160;protected]</a>/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+
+&lt;!-- 2. Ramel custom styles (AFTER Bootstrap) --&gt;
+&lt;link href="style.css" rel="stylesheet"&gt;
+
+&lt;!-- Bootstrap JS (before closing body) --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f3919c9c878087819283b3c6ddc0ddc0">[email&#160;protected]</a>/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</pre>
+        <p class="mt-2"><strong>Rule:</strong> Always load <code>style.css</code> after Bootstrap so Ramel styles override Bootstrap defaults cleanly.</p>
+      </section>
+
+      <!-- 2. LAYOUT -->
+      <section id="layout" class="card-ramel demo-block">
+        <h5>2. Layout Structure</h5>
+        <p>Wrap your entire app in <code>.app-wrapper</code>. The sidebar uses fixed positioning; the main content uses <code>margin-left: var(--sidebar-width)</code> automatically.</p>
+        <pre>&lt;div class="app-wrapper"&gt;
+
+  &lt;!-- Sidebar --&gt;
+  &lt;aside class="app-sidebar"&gt;
+    &lt;div class="sidebar-logo"&gt;
+      &lt;img src="logo.png" alt="Ramel"&gt;
+    &lt;/div&gt;
+    &lt;p class="sidebar-menu-label"&gt;Main Menu&lt;/p&gt;
+    &lt;ul class="sidebar-nav"&gt;
+      &lt;li class="active"&gt;&lt;a href="#"&gt;Dashboard&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Calendar&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Notification&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#"&gt;Settings&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;p class="sidebar-footer"&gt;Copyrights 2025 | Ramel Techno Sol&lt;/p&gt;
+  &lt;/aside&gt;
+
+  &lt;!-- Main --&gt;
+  &lt;div class="app-main"&gt;
+
+    &lt;!-- Topbar --&gt;
+    &lt;header class="app-topbar"&gt;
+      &lt;button class="topbar-icon-btn"&gt;🔔&lt;/button&gt;
+      &lt;div class="topbar-user"&gt;
+        &lt;img src="avatar.jpg" alt="Gokul"&gt;
+        &lt;span class="username"&gt;Gokul&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;!-- Page content --&gt;
+    &lt;main class="page-content"&gt;
+      &lt;div class="page-header"&gt;
+        &lt;h1 class="page-title"&gt;Dashboard&lt;/h1&gt;
+        &lt;p class="breadcrumb-ramel"&gt;/ Dashboard / &lt;span&gt;Employee Dashboard&lt;/span&gt;&lt;/p&gt;
+      &lt;/div&gt;
+
+      &lt;!-- your content here using Bootstrap grid --&gt;
+      &lt;div class="row g-3"&gt;
+        &lt;div class="col-md-4"&gt; ... &lt;/div&gt;
+        &lt;div class="col-md-4"&gt; ... &lt;/div&gt;
+        &lt;div class="col-md-4"&gt; ... &lt;/div&gt;
+      &lt;/div&gt;
+
+    &lt;/main&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+      </section>
+
+      <!-- 3. BUTTONS -->
+      <section id="buttons" class="card-ramel demo-block">
+        <h5>3. Buttons</h5>
+        <div class="d-flex gap-3 flex-wrap mb-3">
+          <button class="btn-ramel-primary">Apply New Leave</button>
+          <button class="btn-ramel-dark">More Details</button>
+          <button class="btn-ramel-outline">Cancel</button>
+          <button class="btn-ramel-primary btn-ramel-block" style="max-width:200px">Login</button>
+        </div>
+        <pre>&lt;button class="btn-ramel-primary"&gt;Apply New Leave&lt;/button&gt;
+&lt;button class="btn-ramel-dark"&gt;More Details&lt;/button&gt;
+&lt;button class="btn-ramel-outline"&gt;Cancel&lt;/button&gt;
+
+&lt;!-- Full width --&gt;
+&lt;button class="btn-ramel-primary btn-ramel-block"&gt;Login&lt;/button&gt;</pre>
+      </section>
+
+      <!-- 4. FORMS -->
+      <section id="forms" class="card-ramel demo-block">
+        <h5>4. Form Controls</h5>
+        <div class="row g-3 mb-3" style="max-width:500px">
+          <div class="col-12">
+            <div class="form-group-ramel">
+              <label>Email</label>
+              <input class="form-control-ramel" type="email" placeholder="hello@email.com">
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group-ramel">
+              <label>Leave Type</label>
+              <select class="form-control-ramel is-select">
+                <option>Select</option>
+                <option>Sick Leave</option>
+                <option>Casual Leave</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group-ramel">
+              <label>Reason</label>
+              <textarea class="form-control-ramel" rows="3" placeholder="Enter reason..."></textarea>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="checkbox-ramel">
+              <input type="checkbox"> Remember Me
+            </label>
+          </div>
+        </div>
+        <pre>&lt;div class="form-group-ramel"&gt;
+  &lt;label&gt;Email&lt;/label&gt;
+  &lt;input class="form-control-ramel" type="email" placeholder="<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8fe7eae3e3e0cfeae2eee6e3a1ece0e2">[email&#160;protected]</a>"&gt;
+&lt;/div&gt;
+
+&lt;!-- Dropdown --&gt;
+&lt;div class="form-group-ramel"&gt;
+  &lt;label&gt;Leave Type&lt;/label&gt;
+  &lt;select class="form-control-ramel is-select"&gt;
+    &lt;option&gt;Select&lt;/option&gt;
+    &lt;option&gt;Sick Leave&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;
+
+&lt;!-- Checkbox --&gt;
+&lt;label class="checkbox-ramel"&gt;
+  &lt;input type="checkbox"&gt; Remember Me
+&lt;/label&gt;</pre>
+      </section>
+
+      <!-- 5. CARDS -->
+      <section id="cards" class="card-ramel demo-block">
+        <h5>5. Cards</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <div class="card-ramel">
+              <div class="card-label">Total Leaves</div>
+              <div class="card-value">16</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card-ramel-dark">
+              <div class="card-label" style="color:rgba(255,255,255,0.5)">Employee</div>
+              <div class="card-value" style="color:#fff">Sri Gokul Krishnan</div>
+            </div>
+          </div>
+        </div>
+        <pre>&lt;!-- Light card --&gt;
+&lt;div class="card-ramel"&gt;
+  &lt;div class="card-label"&gt;Total Leaves&lt;/div&gt;
+  &lt;div class="card-value"&gt;16&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Dark card --&gt;
+&lt;div class="card-ramel-dark"&gt;
+  Employee info here
+&lt;/div&gt;</pre>
+      </section>
+
+      <!-- 6. BADGES -->
+      <section id="badges" class="card-ramel demo-block">
+        <h5>6. Status Badges</h5>
+        <div class="d-flex gap-2 mb-3">
+          <span class="badge-approved">Approved</span>
+          <span class="badge-pending">Pending</span>
+          <span class="badge-rejected">Rejected</span>
+          <button class="btn-edit-sm">EDIT</button>
+        </div>
+        <pre>&lt;span class="badge-approved"&gt;Approved&lt;/span&gt;
+&lt;span class="badge-pending"&gt;Pending&lt;/span&gt;
+&lt;span class="badge-rejected"&gt;Rejected&lt;/span&gt;
+&lt;button class="btn-edit-sm"&gt;EDIT&lt;/button&gt;</pre>
+      </section>
+
+      <!-- 7. TABLES -->
+      <section id="tables" class="card-ramel demo-block">
+        <h5>7. Data Table</h5>
+        <table class="table-ramel mb-3" style="font-size:13px">
+          <thead>
+            <tr>
+              <th>S.NO</th><th>Leave Type</th><th>From</th><th>To</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>01</td><td>Sick Leave</td><td>01/01/2025</td><td>01/01/2025</td>
+              <td><span class="badge-approved">Approved</span> <button class="btn-edit-sm ms-1">EDIT</button></td>
+            </tr>
+            <tr>
+              <td>02</td><td>Casual Leave</td><td>05/02/2025</td><td>06/02/2025</td>
+              <td><span class="badge-pending">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <pre>&lt;table class="table-ramel"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;S.NO&lt;/th&gt;&lt;th&gt;Leave Type&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;01&lt;/td&gt;&lt;td&gt;Sick Leave&lt;/td&gt;
+      &lt;td&gt;&lt;span class="badge-approved"&gt;Approved&lt;/span&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</pre>
+      </section>
+
+      <!-- 8. MODALS -->
+      <section id="modals" class="card-ramel demo-block">
+        <h5>8. Modals</h5>
+        <button class="btn-ramel-primary" data-bs-toggle="modal" data-bs-target="#demoModal">Open Modal</button>
+        <div class="modal fade modal-ramel" id="demoModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Add Leave</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group-ramel">
+                  <label>Leave Type</label>
+                  <select class="form-control-ramel is-select"><option>Select</option></select>
+                </div>
+                <div class="form-group-ramel">
+                  <label>Reason</label>
+                  <textarea class="form-control-ramel" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn-ramel-outline" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-ramel-primary">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <pre>&lt;!-- Trigger --&gt;
+&lt;button class="btn-ramel-primary" data-bs-toggle="modal" data-bs-target="#addLeave"&gt;
+  Add Leave
+&lt;/button&gt;
+
+&lt;!-- Modal --&gt;
+&lt;div class="modal fade modal-ramel" id="addLeave" tabindex="-1"&gt;
+  &lt;div class="modal-dialog modal-dialog-centered"&gt;
+    &lt;div class="modal-content"&gt;
+      &lt;div class="modal-header"&gt;
+        &lt;h5 class="modal-title"&gt;Add Leave&lt;/h5&gt;
+        &lt;button type="button" class="btn-close" data-bs-dismiss="modal"&gt;&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class="modal-body"&gt; ... &lt;/div&gt;
+      &lt;div class="modal-footer"&gt;
+        &lt;button class="btn-ramel-outline" data-bs-dismiss="modal"&gt;Cancel&lt;/button&gt;
+        &lt;button class="btn-ramel-primary"&gt;Apply&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+      </section>
+
+      <!-- 9. COMPONENTS -->
+      <section id="components" class="card-ramel demo-block">
+        <h5>9. Key Components</h5>
+
+        <!-- Alert Banner -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:6px;">Alert Banner</p>
+        <div class="alert-banner mb-4">
+          Your Leave Request on 24th April has been approved
+          <button class="alert-close">&times;</button>
+        </div>
+
+        <!-- Team Members -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:6px;">Team Member Items</p>
+        <div class="card-ramel mb-4" style="max-width:340px;padding:12px 16px;">
+          <div class="team-member-item">
+            <div style="width:40px;height:40px;border-radius:50%;background:#E8451A;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0;">AJ</div>
+            <div>
+              <p class="tm-name">Alexander Jermai</p>
+              <p class="tm-role">UI/UX Designer</p>
+            </div>
+          </div>
+          <div class="team-member-item">
+            <div style="width:40px;height:40px;border-radius:50%;background:#1B2A4A;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0;">DE</div>
+            <div>
+              <p class="tm-name">Daniel Esbella</p>
+              <p class="tm-role">Product Designer</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Items -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:6px;">Notification Items</p>
+        <div class="card-ramel mb-4" style="max-width:400px;padding:12px 16px;">
+          <div class="notification-item">
+            <div style="width:38px;height:38px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;">LM</div>
+            <div>
+              <p class="notif-text">Manager approved your leave req</p>
+              <p class="notif-time">Today at 9:42 AM</p>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div style="width:38px;height:38px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;">LM</div>
+            <div>
+              <p class="notif-text">Lex Murphy wished you happy birthday</p>
+              <p class="notif-time">Today at 9:42 AM</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Holiday + Leave Policy Cards -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:6px;">Holiday & Policy Cards</p>
+        <div class="d-flex gap-3 flex-wrap mb-4" style="max-width:500px;">
+          <div class="holiday-card" style="flex:1;min-width:200px;">
+            <div>
+              <div class="hol-title">Next Holiday</div>
+              <div class="hol-sub">Diwali, 15 Sept 2025</div>
+            </div>
+            <button class="btn-view-all">View All</button>
+          </div>
+          <div class="leave-policy-card" style="flex:1;min-width:200px;">
+            <div>
+              <div class="lp-title">Leave Policy</div>
+              <div class="lp-sub">Last Updated : Today</div>
+            </div>
+            <button class="btn-view-all">View All</button>
+          </div>
+        </div>
+
+        <!-- Birthday Card -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:6px;">Team Birthday Card</p>
+        <div class="birthday-card mb-4" style="max-width:220px;">
+          <div style="width:64px;height:64px;border-radius:50%;background:#374B6E;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;margin:0 auto 12px;border:3px solid rgba(255,255,255,0.3);">NK</div>
+          <div class="bd-name">Nandha Krishnan</div>
+          <div class="bd-role">PHP Developer</div>
+          <button class="btn-ramel-primary btn-ramel-block mt-2" style="font-size:13px;padding:7px;">Send Wishes</button>
+        </div>
+
+        <!-- File Upload Items -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:6px;">File Upload Items</p>
+        <div style="max-width:360px;" class="mb-4">
+          <div class="upload-dropzone mb-3">
+            <div class="upload-icon">⬇️</div>
+            <div class="upload-hint">Choose a file or drag & drop it here</div>
+            <div class="upload-types">JPEG, PNG and PDF up to 10 MB</div>
+          </div>
+          <div class="file-item">
+            <div class="file-icon">PDF</div>
+            <div>
+              <p class="file-name">12 Mark Sheet</p>
+              <p class="file-size">43KB</p>
+            </div>
+            <div class="file-actions">
+              <button class="btn-file-view">👁</button>
+              <button class="btn-file-delete">🗑</button>
+            </div>
+          </div>
+          <div class="file-item">
+            <div class="file-icon">PDF</div>
+            <div>
+              <p class="file-name">Ramel Offer Letter</p>
+              <p class="file-size">43KB</p>
+            </div>
+            <div class="file-actions">
+              <button class="btn-file-view">👁</button>
+              <button class="btn-file-delete">🗑</button>
+            </div>
+          </div>
+        </div>
+
+        <pre>&lt;!-- Notification Banner --&gt;
+&lt;div class="alert-banner"&gt;
+  Your Leave Request on 24th April has been approved
+  &lt;button class="alert-close"&gt;&amp;times;&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Team Member --&gt;
+&lt;div class="team-member-item"&gt;
+  &lt;img class="tm-avatar" src="avatar.jpg"&gt;
+  &lt;div&gt;
+    &lt;p class="tm-name"&gt;Alexander Jermai&lt;/p&gt;
+    &lt;p class="tm-role"&gt;UI/UX Designer&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Notification Item --&gt;
+&lt;div class="notification-item"&gt;
+  &lt;img class="notif-avatar" src="avatar.jpg"&gt;
+  &lt;div&gt;
+    &lt;p class="notif-text"&gt;Manager approved your leave req&lt;/p&gt;
+    &lt;p class="notif-time"&gt;Today at 9:42 AM&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Holiday Card --&gt;
+&lt;div class="holiday-card"&gt;
+  &lt;div&gt;
+    &lt;div class="hol-title"&gt;Next Holiday&lt;/div&gt;
+    &lt;div class="hol-sub"&gt;Diwali, 15 Sept 2025&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;button class="btn-view-all"&gt;View All&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Leave Policy Card --&gt;
+&lt;div class="leave-policy-card"&gt;
+  &lt;div&gt;
+    &lt;div class="lp-title"&gt;Leave Policy&lt;/div&gt;
+    &lt;div class="lp-sub"&gt;Last Updated : Today&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;button class="btn-view-all"&gt;View All&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- File Upload Item --&gt;
+&lt;div class="file-item"&gt;
+  &lt;div class="file-icon"&gt;PDF&lt;/div&gt;
+  &lt;div&gt;
+    &lt;p class="file-name"&gt;12 Mark Sheet&lt;/p&gt;
+    &lt;p class="file-size"&gt;43KB&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="file-actions"&gt;
+    &lt;button class="btn-file-view"&gt;👁&lt;/button&gt;
+    &lt;button class="btn-file-delete"&gt;🗑&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+      </section>
+
+      <!-- 10. UTILITIES -->
+      <section id="utils" class="card-ramel demo-block">
+        <h5>10. Utility Classes</h5>
+
+        <!-- Color utilities -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:8px;">Colors</p>
+        <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+          <span class="text-orange fw-600">text-orange</span>
+          <span class="text-muted-ramel">text-muted-ramel</span>
+          <span class="text-secondary-ramel">text-secondary-ramel</span>
+          <span style="background:#E8451A;color:#fff;padding:4px 14px;border-radius:6px;font-size:13px;">bg-orange</span>
+          <span style="background:#1B2A4A;color:#fff;padding:4px 14px;border-radius:6px;font-size:13px;">bg-navy</span>
+          <span style="background:#F5F5F5;color:#1A1A2E;padding:4px 14px;border-radius:6px;font-size:13px;border:1px solid #E5E7EB;">bg-page</span>
+        </div>
+
+        <!-- Font weights -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:8px;">Font Weights</p>
+        <div class="d-flex gap-4 mb-4">
+          <span class="fw-600" style="font-size:15px;">fw-600 — Semi-bold</span>
+          <span class="fw-700" style="font-size:15px;">fw-700 — Bold</span>
+        </div>
+
+        <!-- Border radius -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:8px;">Border Radius</p>
+        <div class="d-flex gap-3 flex-wrap mb-4">
+          <div style="background:#E8451A1A;border:1.5px solid #E8451A;padding:10px 20px;font-size:13px;" class="rounded-ramel">rounded-ramel (10px)</div>
+          <div style="background:#E8451A1A;border:1.5px solid #E8451A;padding:10px 20px;font-size:13px;" class="rounded-ramel-lg">rounded-ramel-lg (16px)</div>
+        </div>
+
+        <!-- Divider -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:8px;">Divider</p>
+        <div style="max-width:400px;" class="mb-4">
+          <p style="font-size:13px;margin:0;">Content above the divider</p>
+          <div class="divider"></div>
+          <p style="font-size:13px;margin:0;">Content below the divider</p>
+        </div>
+
+        <!-- Section title -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:8px;">Section Title</p>
+        <div class="mb-4">
+          <div class="section-title">Team Members</div>
+          <div class="section-title">Leave Details</div>
+        </div>
+
+        <!-- Fade animation -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:8px;">Fade-In Animation</p>
+        <div class="mb-4 d-flex gap-3 align-items-center">
+          <div class="card-ramel fade-in" style="padding:12px 20px;font-size:13px;">This card fades in on load</div>
+          <button class="btn-ramel-outline" style="font-size:13px;" onclick="this.previousElementSibling.style.animation='none';setTimeout(()=>{this.previousElementSibling.style.animation='';},50)">▶ Replay</button>
+        </div>
+
+        <!-- CSS Variables -->
+        <p style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:8px;">CSS Variables — Key Tokens</p>
+        <div class="mb-4" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+          <div style="background:#E8451A;border-radius:8px;padding:12px;color:#fff;">
+            <div style="font-size:11px;opacity:0.75;margin-bottom:2px;">--ramel-orange</div>
+            <div style="font-size:13px;font-weight:700;">#E8451A</div>
+          </div>
+          <div style="background:#1B2A4A;border-radius:8px;padding:12px;color:#fff;">
+            <div style="font-size:11px;opacity:0.75;margin-bottom:2px;">--ramel-navy</div>
+            <div style="font-size:13px;font-weight:700;">#1B2A4A</div>
+          </div>
+          <div style="background:#F5F5F5;border-radius:8px;padding:12px;color:#1A1A2E;border:1px solid #E5E7EB;">
+            <div style="font-size:11px;color:#9CA3AF;margin-bottom:2px;">--bg-page</div>
+            <div style="font-size:13px;font-weight:700;">#F5F5F5</div>
+          </div>
+          <div style="background:#FFFFFF;border-radius:8px;padding:12px;color:#1A1A2E;border:1px solid #E5E7EB;">
+            <div style="font-size:11px;color:#9CA3AF;margin-bottom:2px;">--bg-card</div>
+            <div style="font-size:13px;font-weight:700;">#FFFFFF</div>
+          </div>
+          <div style="background:#6B7280;border-radius:8px;padding:12px;color:#fff;">
+            <div style="font-size:11px;opacity:0.75;margin-bottom:2px;">--text-secondary</div>
+            <div style="font-size:13px;font-weight:700;">#6B7280</div>
+          </div>
+          <div style="background:#22C55E;border-radius:8px;padding:12px;color:#fff;">
+            <div style="font-size:11px;opacity:0.75;margin-bottom:2px;">--status-approved-bg</div>
+            <div style="font-size:13px;font-weight:700;">#22C55E</div>
+          </div>
+        </div>
+
+        <pre>&lt;!-- Colors --&gt;
+&lt;span class="text-orange"&gt;Orange text&lt;/span&gt;
+&lt;span class="text-muted-ramel"&gt;Muted text&lt;/span&gt;
+&lt;div class="bg-orange"&gt;Orange background&lt;/div&gt;
+
+&lt;!-- Font weights --&gt;
+&lt;span class="fw-600"&gt;Semi-bold&lt;/span&gt;
+&lt;span class="fw-700"&gt;Bold&lt;/span&gt;
+
+&lt;!-- Border radius --&gt;
+&lt;div class="rounded-ramel"&gt;Medium radius&lt;/div&gt;
+&lt;div class="rounded-ramel-lg"&gt;Large radius&lt;/div&gt;
+
+&lt;!-- Divider --&gt;
+&lt;div class="divider"&gt;&lt;/div&gt;
+
+&lt;!-- Section title --&gt;
+&lt;div class="section-title"&gt;Team Members&lt;/div&gt;
+
+&lt;!-- Fade animation --&gt;
+&lt;div class="fade-in"&gt;Animates in on load&lt;/div&gt;
+
+&lt;!-- CSS Variables (override in your own CSS) --&gt;
+&lt;sty

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ramel HR — Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --orange:#E8451A; --orange-h:#c93c16; --orange-l:rgba(232,69,26,.1);
+      --navy:#1B2A4A; --navy-l:#243355;
+      --bg:#F5F5F5; --bg-card:#fff; --bg-muted:#F9F9F9;
+      --border:#E5E7EB;
+      --txt:#1A1A2E; --txt-s:#6B7280; --txt-m:#6B7280;
+      --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:24px; --r-pill:50px;
+      --sh-card:0 2px 12px rgba(0,0,0,.06);
+      --sidebar-w:220px; --topbar-h:60px;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{font-family:'DM Sans','Segoe UI',sans-serif;font-size:14px;background:var(--bg);color:var(--txt);margin:0;-webkit-font-smoothing:antialiased;}
+    a{color:var(--orange);text-decoration:none}
+    p{margin:0}
+
+    /* ── LAYOUT ── */
+    .app-wrapper{display:flex;min-height:100vh}
+
+    /* SIDEBAR */
+    .app-sidebar{
+      width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);
+      display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;
+      z-index:1000;box-shadow:0 1px 3px rgba(0,0,0,.06);
+      transition:transform .25s ease;
+    }
+    .sidebar-logo{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;}
+    .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#E8451A,#c93c16);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;flex-shrink:0;}
+    .logo-name{font-size:16px;font-weight:800;color:#E8451A;letter-spacing:.5px;line-height:1;}
+    .logo-sub{font-size:9px;color:#1B2A4A;font-weight:500;margin-top:1px;line-height:1;}
+    .sidebar-menu-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-m);padding:20px 20px 8px;margin:0;}
+    .sidebar-nav{list-style:none;padding:8px 0;margin:0;flex:1;}
+    .sidebar-nav li a{
+      display:flex;align-items:center;gap:10px;padding:10px 20px;
+      color:var(--txt-s);font-size:14px;font-weight:500;text-decoration:none;
+      position:relative;transition:background .15s,color .15s;
+    }
+    .sidebar-nav li a:hover{background:var(--orange-l);color:var(--orange);}
+    .sidebar-nav li.active>a{color:var(--orange);background:var(--orange-l);font-weight:600;}
+    .sidebar-nav li.active>a::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:var(--orange);border-radius:0 3px 3px 0;}
+    .sidebar-footer{padding:16px 20px;font-size:11px;color:var(--txt-m);border-top:1px solid var(--border);}
+
+    /* MAIN */
+    .app-main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+    /* TOPBAR */
+    .app-topbar{
+      height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:flex-end;
+      padding:0 28px;gap:12px;position:sticky;top:0;z-index:100;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    .topbar-action-btn{
+      display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+      border:1px solid var(--border);border-radius:var(--r-sm);background:#fff;
+      font-size:13px;font-weight:500;color:var(--txt-s);cursor:pointer;
+      transition:border-color .15s,color .15s;
+    }
+    .topbar-action-btn:hover{border-color:var(--orange);color:var(--orange);}
+    .topbar-divider{width:1px;height:24px;background:var(--border);}
+    .topbar-icon-btn{
+      width:36px;height:36px;border-radius:50%;border:1px solid var(--border);
+      background:transparent;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;color:var(--txt-s);font-size:16px;transition:background .15s,color .15s;
+    }
+    .topbar-icon-btn:hover{background:var(--orange-l);color:var(--orange);border-color:var(--orange);}
+    .topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;}
+    .topbar-avatar{width:34px;height:34px;border-radius:50%;background:#374B6E;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+    .username{font-size:14px;font-weight:600;color:var(--txt);}
+
+    /* PAGE CONTENT */
+    .page-content{padding:24px 28px;flex:1;}
+    .page-title{font-size:28px;font-weight:700;color:var(--txt);margin:0;}
+    .breadcrumb-ramel{font-size:12px;color:var(--txt-m);margin-top:2px;}
+    .breadcrumb-ramel span{color:var(--txt-s);}
+
+    /* ALERT BANNER */
+    .alert-banner{
+      background:#FFF8F0;border:1px solid #FDE8D0;border-radius:var(--r-md);
+      padding:10px 16px;font-size:12px;color:var(--txt-s);
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;
+    }
+    .alert-close{background:none;border:none;cursor:pointer;color:var(--txt-m);font-size:18px;line-height:1;padding:0;}
+
+    /* ── CARDS ── */
+    .card-ramel{background:#fff;border-radius:var(--r-lg);box-shadow:var(--sh-card);border:1px solid var(--border);padding:20px;}
+
+    /* EMPLOYEE CARD */
+    .emp-card{background:var(--navy);border-radius:var(--r-lg);padding:20px;color:#fff;position:relative;height:100%;}
+    .emp-avatar-circle{width:52px;height:52px;border-radius:50%;background:#374B6E;border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+    .emp-name{font-size:16px;font-weight:700;color:#fff;margin:0;}
+    .emp-role{font-size:12px;color:rgba(255,255,255,.65);margin:0;}
+    .emp-dept{font-size:11px;background:rgba(255,255,255,.15);padding:2px 10px;border-radius:50px;color:rgba(255,255,255,.85);margin-left:6px;}
+    .edit-fab{position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);border:none;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:13px;}
+    .edit-fab:hover{background:rgba(255,255,255,.28);}
+    .emp-dl{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px;}
+    .emp-dv{font-size:13px;color:rgba(255,255,255,.9);font-weight:500;}
+
+    /* LEAVE CARD */
+    .card-section-title{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:0;}
+    .ls-label{font-size:12px;color:var(--txt-m);margin-bottom:2px;}
+    .ls-val{font-size:22px;font-weight:700;color:var(--txt);}
+    .leave-year-badge{font-size:12px;color:var(--txt-m);display:flex;align-items:center;gap:4px;}
+
+    /* ATTENDANCE CARD */
+    .att-card{background:#fff;border:2px solid var(--orange);border-radius:var(--r-lg);padding:20px;text-align:center;height:100%;display:flex;flex-direction:column;align-items:center;}
+    .att-label{font-size:11px;color:var(--txt-m);margin-bottom:4px;}
+    .att-date{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:16px;}
+    .donut-wrap{position:relative;width:120px;height:120px;flex-shrink:0;margin-bottom:10px;}
+    .donut-wrap svg{transform:rotate(-90deg);}
+    .donut-bg{fill:none;stroke:#E5E7EB;stroke-width:9;}
+    .donut-prog{fill:none;stroke:#22C55E;stroke-width:9;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:75;}
+    .donut-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+    .donut-label .dl-sm{font-size:11px;color:var(--txt-m);}
+    .donut-label .dl-lg{font-size:15px;font-weight:700;color:var(--txt);}
+    .punch-info{font-size:12px;color:var(--txt-m);margin-bottom:12px;}
+
+    /* BUTTONS */
+    .btn-primary-r{background:var(--orange);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:background .15s,transform .1s;}
+    .btn-primary-r:hover{background:var(--orange-h);transform:translateY(-1px);}
+    .btn-dark-r{background:var(--navy);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .15s;}
+    .btn-dark-r:hover{background:var(--navy-l);}
+    .btn-block{width:100%;}
+    .btn-outline-r{background:transparent;color:var(--txt-s);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 18px;font-size:14px;cursor:pointer;transition:border-color .15s,color .15s;}
+    .btn-outline-r:hover{border-color:var(--orange);color:var(--orange);}
+    .btn-view-all{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:var(--r-pill);padding:4px 14px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
+    .btn-view-all:hover{background:rgba(255,255,255,.35);}
+
+    /* TEAM MEMBERS */
+    .tm-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+    .tm-item:last-child{border-bottom:none;}
+    .tm-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+    .tm-name{font-size:14px;font-weight:600;color:var(--txt);margin:0;}
+    .tm-role{font-size:11px;color:var(--txt-m);margin:0;}
+
+    /* NOTIFICATIONS */
+    .notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+    .notif-item:last-child{border-bottom:none;}
+    .notif-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+    .notif-text{font-size:12px;font-weight:500;color:var(--txt);margin:0;}
+    .notif-time{font-size:11px;color:var(--txt-m);margin:2px 0 0;}
+
+    /* BIRTHDAY CARD */
+    .birthday-card{border-radius:var(--r-lg);padding:20px;text-align:center;color:#fff;}
+    .bd-card-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:16px;}
+    .bd-avatar{width:72px;height:72px;border-radius:50%;background:#374B6E;border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;margin:0 auto 12px;}
+    .bd-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+    .bd-role{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:14px;}
+
+    /* LEAVE POLICY */
+    .leave-policy-card{background:#2D5A8E;border-radius:var(--r-lg);padding:16px 20px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+    .lp-title{font-size:15px;font-weight:700;}
+    .lp-sub{font-size:11px;color:rgba(255,255,255,.65);margin-top:2px;}
+
+    /* HOLIDAY CARD */
+    .holiday-card{background:#F59E0B;border-radius:var(--r-lg);padding:16px 20px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+    .hol-title{font-size:15px;font-weight:700;}
+    .hol-sub{font-size:11px;color:rgba(255,255,255,.8);margin-top:2px;}
+
+    /* MODAL */
+    .modal-content{border:none;border-radius:var(--r-xl) !important;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+    .modal-header{border-bottom:1px solid var(--border);padding:20px 24px;}
+    .modal-title{font-size:18px;font-weight:700;color:var(--txt);}
+    .modal-body{padding:24px;}
+    .modal-footer{border-top:1px solid var(--border);padding:16px 24px;gap:10px;}
+    .modal-backdrop.show{background:rgba(27,42,74,.45);}
+    .form-group-r{margin-bottom:16px;}
+    .form-group-r label{display:block;font-size:12px;font-weight:600;color:var(--txt);margin-bottom:6px;}
+    .form-ctrl{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;color:var(--txt);background:#fff;outline:none;font-family:inherit;}
+    .form-ctrl:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-l);}
+    .form-ctrl.is-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;}
+    textarea.form-ctrl{resize:vertical;min-height:100px;}
+
+    /* HOLIDAY LIST */
+    .hl-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);gap:16px;}
+    .hl-row:last-child{border-bottom:none;}
+    .hl-num{font-size:12px;font-weight:600;color:var(--txt-m);width:28px;flex-shrink:0;}
+    .hl-name{font-size:14px;color:var(--txt);flex:1;}
+    .hl-date{font-size:12px;color:var(--txt-s);font-weight:500;}
+    .badge-optional{font-size:11px;color:var(--txt-m);font-style:italic;}
+
+    /* PUNCH OUT TIMER */
+    .punch-timer{font-size:52px;font-weight:800;color:var(--orange);letter-spacing:.04em;text-align:center;margin:12px 0 24px;font-variant-numeric:tabular-nums;}
+
+    /* SIDEBAR TOGGLE */
+    .sidebar-toggle{display:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;align-items:center;justify-content:center;color:var(--txt-s);font-size:20px;margin-right:auto;}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;}
+    .sidebar-overlay.show{display:block;}
+
+    /* RESPONSIVE */
+    @media(max-width:991.98px){
+      .sidebar-toggle{display:flex;}
+      .app-sidebar{transform:translateX(-100%);}
+      .app-sidebar.open{transform:translateX(0);}
+      .app-main{margin-left:0;}
+    }
+    @media(max-width:767.98px){
+      .page-content{padding:16px;}
+      .topbar-action-btn span{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="/assets/images/logo.png" width="120px" alt="Ramel Logo">
+    </div>
+
+    <p class="sidebar-menu-label">Main Menu</p>
+
+    <ul class="sidebar-nav">
+      <li class="active">
+        <a href="#"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+      </li>
+      <li>
+        <a href="#"><i class="bi bi-calendar3"></i> Calendar</a>
+      </li>
+      <li>
+        <a href="#"><i class="bi bi-bell"></i> Notification</a>
+      </li>
+      <li>
+        <a href="#"><i class="bi bi-gear"></i> Settings</a>
+      </li>
+    </ul>
+
+    <p class="sidebar-footer">Copyrights 2025 | Ramel Techno Sol</p>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <div class="app-main">
+
+    <!-- TOPBAR -->
+    <header class="app-topbar">
+      <button class="sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
+
+      <button class="topbar-action-btn">
+        <i class="bi bi-box-arrow-up"></i> <span>Export</span> <i class="bi bi-chevron-down" style="font-size:10px"></i>
+      </button>
+      <button class="topbar-action-btn">
+        <i class="bi bi-calendar3"></i> <span>Calendar</span>
+      </button>
+
+      <div class="topbar-divider"></div>
+
+      <button class="topbar-icon-btn"><i class="bi bi-bell"></i></button>
+
+      <div class="topbar-user">
+        <div class="topbar-avatar">G</div>
+        <span class="username">Gokul</span>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- Page header -->
+      <div class="mb-3">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="breadcrumb-ramel">/ Dashboard / <span>Employee Dashboard</span></p>
+      </div>
+
+      <!-- Alert banner -->
+      <div class="alert-banner" id="alertBanner">
+        <span>Your Leave Request on 24th April has been approved</span>
+        <button class="alert-close" onclick="this.closest('.alert-banner').remove()">&times;</button>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════
+           ROW 1 — col-12 col-md-4 col-md-4 col-md-4
+      ══════════════════════════════════════════════════ -->
+      <div class="row g-3 mb-3">
+
+        <!-- Employee Profile Card -->
+        <div class="col-12 col-md-4">
+          <div class="emp-card">
+            <button class="edit-fab"><i class="bi bi-pencil"></i></button>
+
+            <!-- Avatar + name row -->
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="emp-avatar-circle">
+                <!-- SVG person icon to match the dark silhouette in PDF -->
+                <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                  <circle cx="15" cy="11" r="6" fill="#9CA3AF"/>
+                  <ellipse cx="15" cy="25" rx="10" ry="6" fill="#9CA3AF"/>
+                </svg>
+              </div>
+              <div>
+                <p class="emp-name">Sri Gokul Krishnan</p>
+                <p class="emp-role">Senior Product Designer <span class="emp-dept">UI/UX Design</span></p>
+              </div>
+            </div>
+
+            <!-- Details 2-col grid -->
+            <div class="row g-2 mt-1">
+              <div class="col-6">
+                <p class="emp-dl">Phone Number</p>
+                <p class="emp-dv">+91 735 855 4791</p>
+              </div>
+              <div class="col-6">
+                <p class="emp-dl">Email Address</p>
+                <p class="emp-dv" style="font-size:11px;word-break:break-all;">srigokulkrishnan@gmail.com</p>
+              </div>
+              <div class="col-6">
+                <p class="emp-dl">Office Location</p>
+                <p class="emp-dv">INDIA</p>
+              </div>
+              <div class="col-6">
+                <p class="emp-dl">Joining Date</p>
+                <p class="emp-dv">12 Sept 2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leave Details Card -->
+        <div class="col-12 col-md-4">
+          <div class="card-ramel h-100 d-flex flex-column">
+            <!-- Header -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <span class="card-section-title">Leave Details</span>
+              <span class="leave-year-badge"><i class="bi bi-calendar3"></i> 2025</span>
+            </div>
+
+            <!-- Stats 3×2 -->
+            <div class="row g-0 mb-3">
+              <div class="col-6 py-2 pe-3">
+                <p class="ls-label">Total Leaves</p>
+                <p class="ls-val">16</p>
+              </div>
+              <div class="col-6 py-2">
+                <p class="ls-label">Taken</p>
+                <p class="ls-val">10</p>
+              </div>
+              <div class="col-6 py-2 pe-3" style="border-top:1px solid var(--border);">
+                <p class="ls-label">Absent</p>
+                <p class="ls-val">02</p>
+              </div>
+              <div class="col-6 py-2" style="border-top:1px solid var(--border);">
+                <p class="ls-label">Request</p>
+                <p class="ls-val">0</p>
+              </div>
+              <div class="col-6 py-2 pe-3" style="border-top:1px solid var(--border);">
+                <p class="ls-label">Worked Days</p>
+                <p class="ls-val">240</p>
+              </div>
+              <div class="col-6 py-2" style="border-top:1px solid var(--border);">
+                <p class="ls-label">Loss of Pay</p>
+                <p class="ls-val">02</p>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex gap-2 mt-auto">
+              <button class="btn-primary-r flex-fill" data-bs-toggle="modal" data-bs-target="#addLeaveModal">Apply New Leave</button>
+              <button class="btn-dark-r flex-fill">More Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendance Card -->
+        <div class="col-12 col-md-4">
+          <div class="att-card d-flex flex-column justify-content-evenly">
+            <p class="att-label">Attendance</p>
+            <p class="att-date">08:35, 11 Mar 2025</p>
+
+            <!-- Donut -->
+            <div class="donut-wrap">
+              <svg viewBox="0 0 100 100" width="120" height="120">
+                <circle class="donut-bg" cx="50" cy="50" r="45"/>
+                <circle class="donut-prog" cx="50" cy="50" r="45"/>
+              </svg>
+              <div class="donut-label">
+                <span class="dl-sm">Total Hours</span>
+                <span class="dl-lg">5:45:32</span>
+              </div>
+            </div>
+
+            <p class="punch-info">Punch In at 10:00 AM</p>
+            <button class="btn-primary-r btn-block" data-bs-toggle="modal" data-bs-target="#punchOutModal">Punch Out</button>
+          </div>
+        </div>
+
+      </div><!-- /row 1 -->
+
+
+      <!-- ══════════════════════════════════════════════════
+           ROW 2 — Team Members | Notifications | Right panel
+           col-12 col-lg-4 each
+      ══════════════════════════════════════════════════ -->
+      <div class="row g-3">
+
+        <!-- Team Members -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card-ramel h-100">
+            <p class="card-section-title mb-3">Team Members</p>
+
+            <div class="tm-item">
+              <div class="tm-avatar" style="background:#E8451A;">AJ</div>
+              <div><p class="tm-name">Alexander Jermai</p><p class="tm-role">UI/UX Designer</p></div>
+            </div>
+            <div class="tm-item">
+              <div class="tm-avatar" style="background:#6366F1;">AJ</div>
+              <div><p class="tm-name">Alexander Jermai</p><p class="tm-role">Product Designer</p></div>
+            </div>
+            <div class="tm-item">
+              <div class="tm-avatar" style="background:#F59E0B;">DE</div>
+              <div><p class="tm-name">Daniel Esbella</p><p class="tm-role">Product Designer</p></div>
+            </div>
+            <div class="tm-item">
+              <div class="tm-avatar" style="background:#22C55E;">AJ</div>
+              <div><p class="tm-name">Alexander Jermai</p><p class="tm-role">Product Designer</p></div>
+            </div>
+            <div class="tm-item">
+              <div class="tm-avatar" style="background:#EC4899;">AJ</div>
+              <div><p class="tm-name">Alexander Jermai</p><p class="tm-role">Product Designer</p></div>
+            </div>
+            <div class="tm-item" style="border-bottom:none;">
+              <div class="tm-avatar" style="background:#0EA5E9;">AJ</div>
+              <div><p class="tm-name">Alexander Jermai</p><p class="tm-role">Product Designer</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card-ramel h-100">
+            <p class="card-section-title mb-3">Notifications</p>
+
+            <div class="notif-item">
+              <div class="notif-avatar" style="background:#E8451A;">MG</div>
+              <div><p class="notif-text">Manager approved your leave req</p><p class="notif-time">Today at 9:42 AM</p></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-avatar" style="background:#6366F1;">MG</div>
+              <div><p class="notif-text">Manager approved your leave req</p><p class="notif-time">Today at 9:42 AM</p></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-avatar" style="background:#F59E0B;">MG</div>
+              <div><p class="notif-text">Manager approved your leave req</p><p class="notif-time">Today at 9:42 AM</p></div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-avatar" style="background:#22C55E;">MG</div>
+              <div><p class="notif-text">Manager approved your leave req</p><p class="notif-time">Today at 9:42 AM</p></div>
+            </div>
+            <div class="notif-item" style="border-bottom:none;">
+              <div class="notif-avatar" style="background:#0EA5E9;">MG</div>
+              <div><p class="notif-text">Manager approved your leave req</p><p class="notif-time">Today at 9:42 AM</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Birthday + Leave Policy + Holiday -->
+        <div class="col-12 col-md-12 col-lg-4">
+          <div class="d-flex flex-column gap-3">
+
+            <!-- Birthday -->
+            <div class="birthday-card bg-dark">
+              <p class="bd-card-title">Team Birthday</p>
+              <div class="bd-avatar">NK</div>
+              <p class="bd-name">Nandha Krishnan</p>
+              <p class="bd-role">PHP Developer</p>
+              <button class="btn-primary-r btn-block" style="font-size:13px;padding:8px 18px;">Send Wishes</button>
+            </div>
+
+            <!-- Leave Policy -->
+            <div class="leave-policy-card">
+              <div>
+                <div class="lp-title">Leave Policy</div>
+                <div class="lp-sub">Last Updated : Today</div>
+              </div>
+              <button class="btn-view-all">View All</button>
+            </div>
+
+            <!-- Next Holiday -->
+            <div class="holiday-card">
+              <div>
+                <div class="hol-title">Next Holiday</div>
+                <div class="hol-sub">Diwali, 15 Sept 2025</div>
+              </div>
+              <button class="btn-view-all" data-bs-toggle="modal" data-bs-target="#holidayModal">View All</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /row 2 -->
+
+    </main>
+  </div><!-- /app-main -->
+</div><!-- /app-wrapper -->
+
+
+<!-- ══════════ MODAL: Add Leave ══════════ -->
+<div class="modal fade" id="addLeaveModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Leave</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <div class="form-group-r">
+              <label>Leave Type</label>
+              <select class="form-ctrl is-select">
+                <option value="">Select</option>
+                <option>Sick Leave</option>
+                <option>Casual Leave</option>
+                <option>Earned Leave</option>
+                <option>Loss of Pay</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>From</label>
+              <select class="form-ctrl is-select"><option value="">Select</option></select>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>To</label>
+              <select class="form-ctrl is-select"><option value="">Select</option></select>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>No of Days</label>
+              <input type="number" class="form-ctrl" placeholder="0"/>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>Remaining Days</label>
+              <input type="number" class="form-ctrl" placeholder="0" readonly/>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group-r" style="margin-bottom:0;">
+              <label>Reason</label>
+              <textarea class="form-ctrl" rows="4" placeholder="Enter reason..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline-r" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-primary-r">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ MODAL: Punch Out ══════════ -->
+<div class="modal fade" id="punchOutModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+    <div class="modal-content text-center">
+      <div class="modal-body py-4 px-4">
+        <p style="font-size:14px;color:#6B7280;margin-bottom:4px;">Good Evening! Are you sure you want to punch out</p>
+        <div class="punch-timer" id="punchTimer">05 : 12 : 26</div>
+        <button class="btn-primary-r btn-block" data-bs-dismiss="modal" style="font-size:15px;padding:13px;">Punch Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ MODAL: Holiday List ══════════ -->
+<div class="modal fade" id="holidayModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Holiday List</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:0 24px;">
+        <div class="hl-row"><span class="hl-num">01</span><span class="hl-name">Republic Day <span class="badge-optional">Optional</span></span><span class="hl-date">26 JANUARY</span></div>
+        <div class="hl-row"><span class="hl-num">02</span><span class="hl-name">Bogi Pongal</span><span class="hl-date">26 JANUARY</span></div>
+        <div class="hl-row"><span class="hl-num">03</span><span class="hl-name">Pongal</span><span class="hl-date">14 JANUARY</span></div>
+        <div class="hl-row"><span class="hl-num">04</span><span class="hl-name">Holi</span><span class="hl-date">25 MARCH</span></div>
+        <div class="hl-row"><span class="hl-num">05</span><span class="hl-name">Good Friday</span><span class="hl-date">18 APRIL</span></div>
+        <div class="hl-row"><span class="hl-num">06</span><span class="hl-name">Easter <span class="badge-optional">Optional</span></span><span class="hl-date">20 APRIL</span></div>
+        <div class="hl-row"><span class="hl-num">07</span><span class="hl-name">Independence Day</span><span class="hl-date">15 AUGUST</span></div>
+        <div class="hl-row"><span class="hl-num">08</span><span class="hl-name">Gandhi Jayanti</span><span class="hl-date">02 OCTOBER</span></div>
+        <div class="hl-row"><span class="hl-num">09</span><span class="hl-name">Diwali</span><span class="hl-date">15 SEPTEMBER</span></div>
+        <div class="hl-row"><span class="hl-num">10</span><span class="hl-name">Bakrid <span class="badge-optional">Optional</span></span><span class="hl-date">07 JUNE</span></div>
+        <div class="hl-row"><span class="hl-num">11</span><span class="hl-name">Christmas</span><span class="hl-date">25 DECEMBER</span></div>
+        <div class="hl-row" style="border-bottom:none;"><span class="hl-num">12</span><span class="hl-name">New Year's Eve <span class="badge-optional">Optional</span></span><span class="hl-date">31 DECEMBER</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* Sidebar toggle */
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('show');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+
+  /* Punch-out live timer */
+  let h=5, m=12, s=26;
+  let timerInterval = null;
+  document.getElementById('punchOutModal').addEventListener('show.bs.modal', () => {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      s++;
+      if (s===60){s=0;m++;}
+      if (m===60){m=0;h++;}
+      const p = n => String(n).padStart(2,'0');
+      document.getElementById('punchTimer').textContent = `${p(h)} : ${p(m)} : ${p(s)}`;
+    }, 1000);
+  });
+</script>
+
+</body>
+</html>
