@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ramel HR — Leave Requests</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --orange:#E8451A; --orange-h:#c93c16; --orange-l:rgba(232,69,26,.1);
+      --navy:#1B2A4A; --navy-l:#243355;
+      --bg:#F5F5F5; --bg-card:#fff; --bg-muted:#F9F9F9;
+      --border:#E5E7EB;
+      --txt:#1A1A2E; --txt-s:#6B7280; --txt-m:#6B7280;
+      --r-sm:6px; --r-md:10px; --r-lg:16px; --r-xl:24px; --r-pill:50px;
+      --sh-card:0 2px 12px rgba(0,0,0,.06);
+      --sidebar-w:220px; --topbar-h:60px;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{font-family:'DM Sans','Segoe UI',sans-serif;font-size:14px;background:var(--bg);color:var(--txt);margin:0;-webkit-font-smoothing:antialiased;}
+    a{color:var(--orange);text-decoration:none}
+    p{margin:0}
+
+    /* ── LAYOUT ── */
+    .app-wrapper{display:flex;min-height:100vh}
+
+    /* ── SIDEBAR ── */
+    .app-sidebar{
+      width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);
+      display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;
+      z-index:1000;box-shadow:0 1px 3px rgba(0,0,0,.06);
+      transition:transform .25s ease;
+    }
+    .sidebar-logo{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;}
+    .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#E8451A,#c93c16);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;flex-shrink:0;}
+    .logo-name{font-size:16px;font-weight:800;color:#E8451A;letter-spacing:.5px;line-height:1;}
+    .logo-sub{font-size:9px;color:#1B2A4A;font-weight:500;margin-top:1px;line-height:1;}
+    .sidebar-menu-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-m);padding:20px 20px 8px;margin:0;}
+    .sidebar-nav{list-style:none;padding:8px 0;margin:0;flex:1;}
+    .sidebar-nav li a{
+      display:flex;align-items:center;gap:10px;padding:10px 20px;
+      color:var(--txt-s);font-size:14px;font-weight:500;text-decoration:none;
+      position:relative;transition:background .15s,color .15s;
+    }
+    .sidebar-nav li a:hover{background:var(--orange-l);color:var(--orange);}
+    .sidebar-nav li.active>a{color:var(--orange);background:var(--orange-l);font-weight:600;}
+    .sidebar-nav li.active>a::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:var(--orange);border-radius:0 3px 3px 0;}
+    .sidebar-footer{padding:16px 20px;font-size:11px;color:var(--txt-m);border-top:1px solid var(--border);}
+
+    /* ── MAIN ── */
+    .app-main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+    /* ── TOPBAR ── */
+    .app-topbar{
+      height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:flex-end;
+      padding:0 28px;gap:12px;position:sticky;top:0;z-index:100;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    .topbar-action-btn{
+      display:inline-flex;align-items:center;gap:6px;padding:7px 14px;
+      border:1px solid var(--border);border-radius:var(--r-sm);background:#fff;
+      font-size:13px;font-weight:500;color:var(--txt-s);cursor:pointer;
+      transition:border-color .15s,color .15s;
+    }
+    .topbar-action-btn:hover{border-color:var(--orange);color:var(--orange);}
+    .topbar-divider{width:1px;height:24px;background:var(--border);}
+    .topbar-icon-btn{
+      width:36px;height:36px;border-radius:50%;border:1px solid var(--border);
+      background:transparent;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;color:var(--txt-s);font-size:16px;transition:background .15s,color .15s;
+    }
+    .topbar-icon-btn:hover{background:var(--orange-l);color:var(--orange);border-color:var(--orange);}
+    .topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;}
+    .topbar-avatar{width:34px;height:34px;border-radius:50%;background:#374B6E;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+    .username{font-size:14px;font-weight:600;color:var(--txt);}
+
+    /* ── PAGE CONTENT ── */
+    .page-content{padding:24px 28px;flex:1;}
+    .page-title{font-size:28px;font-weight:700;color:var(--txt);margin:0;}
+    .breadcrumb-ramel{font-size:12px;color:var(--txt-m);margin-top:2px;}
+    .breadcrumb-ramel span{color:var(--txt-s);}
+
+    /* ── SIDEBAR TOGGLE (mobile) ── */
+    .sidebar-toggle{display:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;align-items:center;justify-content:center;color:var(--txt-s);font-size:20px;margin-right:auto;}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;}
+    .sidebar-overlay.show{display:block;}
+
+    /* ── TABLE CARD ── */
+    .table-card{
+      background:#fff;
+      border-radius:var(--r-lg);
+      box-shadow:var(--sh-card);
+      border:1px solid var(--border);
+      overflow:hidden;
+    }
+
+    /* ── TOOLBAR ── */
+    .table-toolbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 24px;border-bottom:1px solid var(--border);
+      gap:12px;flex-wrap:wrap;
+    }
+    .toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+    /* Search */
+    .search-wrap{position:relative;}
+    .search-wrap input{
+      padding:8px 14px 8px 34px;border:1px solid var(--border);
+      border-radius:var(--r-sm);font-size:13px;color:var(--txt);
+      background:#fff;outline:none;font-family:inherit;width:220px;
+      transition:border-color .15s;
+    }
+    .search-wrap input:focus{border-color:var(--orange);}
+    .search-wrap input::placeholder{color:var(--txt-m);}
+    .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--txt-m);font-size:13px;pointer-events:none;}
+
+    /* Filter select */
+    .filter-select{
+      padding:8px 30px 8px 12px;border:1px solid var(--border);
+      border-radius:var(--r-sm);font-size:13px;color:var(--txt-s);
+      background:#fff;outline:none;cursor:pointer;font-family:inherit;
+      appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 10px center;
+      transition:border-color .15s;
+    }
+    .filter-select:focus{border-color:var(--orange);outline:none;}
+
+    /* Today button */
+    .btn-today{
+      display:inline-flex;align-items:center;gap:6px;padding:8px 16px;
+      border:1px solid var(--border);border-radius:var(--r-sm);background:#fff;
+      font-size:13px;font-weight:500;color:var(--txt-s);cursor:pointer;
+      font-family:inherit;transition:border-color .15s,color .15s;
+    }
+    .btn-today:hover{border-color:var(--orange);color:var(--orange);}
+
+    /* Apply button */
+    .btn-primary-r{
+      background:var(--orange);color:#fff;border:none;border-radius:var(--r-sm);
+      padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;
+      display:inline-flex;align-items:center;gap:6px;font-family:inherit;
+      transition:background .15s,transform .1s;
+    }
+    .btn-primary-r:hover{background:var(--orange-h);transform:translateY(-1px);}
+
+    /* ── TABLE ── */
+    .leave-table{width:100%;border-collapse:collapse;}
+    .leave-table thead tr{background:#fff;border-bottom:1.5px solid var(--border);}
+    .leave-table thead th{
+      font-size:13px;font-weight:700;color:var(--txt);
+      padding:14px 20px;text-align:left;white-space:nowrap;letter-spacing:.01em;
+    }
+    .leave-table tbody tr{border-bottom:1px solid #F3F4F6;transition:background .1s;}
+    .leave-table tbody tr:last-child{border-bottom:none;}
+    .leave-table tbody tr:hover{background:#FAFAFA;}
+    .leave-table tbody td{font-size:14px;color:var(--txt);padding:13px 20px;vertical-align:middle;}
+    .leave-table tbody td:first-child{color:var(--txt-s);font-weight:500;}
+
+    /* Status cell */
+    .status-cell{display:flex;align-items:center;gap:10px;}
+
+    /* Badges */
+    .badge-approved{background:#22C55E;color:#fff;font-size:12px;font-weight:600;padding:5px 16px;border-radius:var(--r-pill);display:inline-block;white-space:nowrap;}
+    .badge-pending {background:#F59E0B;color:#fff;font-size:12px;font-weight:600;padding:5px 16px;border-radius:var(--r-pill);display:inline-block;white-space:nowrap;}
+    .badge-rejected{background:#EF4444;color:#fff;font-size:12px;font-weight:600;padding:5px 16px;border-radius:var(--r-pill);display:inline-block;white-space:nowrap;}
+
+    /* Edit button */
+    .btn-edit{background:#F59E0B;color:#fff;border:none;border-radius:var(--r-sm);padding:5px 14px;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+    .btn-edit:hover{opacity:.85;}
+
+    /* ── PAGINATION ── */
+    .table-footer{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+    .page-info{font-size:13px;color:var(--txt-s);}
+    .pag-btns{display:flex;gap:4px;}
+    .page-btn{width:32px;height:32px;border-radius:var(--r-sm);border:1px solid var(--border);background:#fff;color:var(--txt-s);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;font-family:inherit;}
+    .page-btn:hover:not(:disabled){border-color:var(--orange);color:var(--orange);}
+    .page-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+    .page-btn:disabled{opacity:.4;cursor:default;}
+
+    /* ── MODAL ── */
+    .modal-content{border:none !important;border-radius:var(--r-xl) !important;box-shadow:0 8px 32px rgba(0,0,0,.14);}
+    .modal-header{border-bottom:1px solid var(--border);padding:20px 24px;}
+    .modal-title{font-size:18px;font-weight:700;color:var(--txt);}
+    .modal-body{padding:24px;}
+    .modal-footer{border-top:1px solid var(--border);padding:16px 24px;gap:10px;}
+    .modal-backdrop.show{background:rgba(27,42,74,.45);}
+    .form-group-r{margin-bottom:16px;}
+    .form-group-r:last-child{margin-bottom:0;}
+    .form-group-r label{display:block;font-size:12px;font-weight:600;color:var(--txt);margin-bottom:6px;}
+    .form-ctrl{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:14px;color:var(--txt);background:#fff;outline:none;font-family:inherit;transition:border-color .15s,box-shadow .15s;}
+    .form-ctrl:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-l);}
+    .form-ctrl[readonly]{background:var(--bg-muted);color:var(--txt-s);}
+    .form-ctrl.is-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;}
+    textarea.form-ctrl{resize:vertical;min-height:90px;}
+    .btn-outline-r{background:transparent;color:var(--txt-s);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 20px;font-size:14px;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s;}
+    .btn-outline-r:hover{border-color:var(--orange);color:var(--orange);}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:991.98px){
+      .sidebar-toggle{display:flex;}
+      .app-sidebar{transform:translateX(-100%);}
+      .app-sidebar.open{transform:translateX(0);}
+      .app-main{margin-left:0;}
+      .topbar-action-btn span{display:none;}
+    }
+    @media(max-width:767.98px){
+      .page-content{padding:16px;}
+      .search-wrap input{width:160px;}
+      .table-toolbar{padding:12px 16px;}
+      .leave-table thead th,.leave-table tbody td{padding:12px 14px;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="/assets/images/logo.png" width="120px" alt="Ramel Logo">
+    </div>
+
+    <p class="sidebar-menu-label">Main Menu</p>
+
+    <ul class="sidebar-nav">
+      <li>
+        <a href="dashboard.html"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+      </li>
+      <li class="active">
+        <a href="leave-requests.html"><i class="bi bi-calendar-check"></i> Leave Requests</a>
+      </li>
+      <li>
+        <a href="#"><i class="bi bi-calendar3"></i> Calendar</a>
+      </li>
+      <li>
+        <a href="#"><i class="bi bi-bell"></i> Notification</a>
+      </li>
+      <li>
+        <a href="settings.html"><i class="bi bi-gear"></i> Settings</a>
+      </li>
+    </ul>
+
+    <p class="sidebar-footer">Copyrights 2025 | Ramel Techno Sol</p>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <div class="app-main">
+
+    <!-- TOPBAR -->
+    <header class="app-topbar">
+      <button class="sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
+
+      <button class="topbar-action-btn">
+        <i class="bi bi-box-arrow-up"></i> <span>Export</span> <i class="bi bi-chevron-down" style="font-size:10px"></i>
+      </button>
+      <button class="topbar-action-btn">
+        <i class="bi bi-calendar3"></i> <span>Calendar</span>
+      </button>
+
+      <div class="topbar-divider"></div>
+
+      <button class="topbar-icon-btn"><i class="bi bi-bell"></i></button>
+
+      <div class="topbar-user">
+        <div class="topbar-avatar">G</div>
+        <span class="username">Gokul</span>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- Page header -->
+      <div class="d-flex align-items-start justify-content-between mb-4">
+        <div>
+          <h1 class="page-title">Leave Requests</h1>
+          <p class="breadcrumb-ramel">/ Dashboard / <span>Leave Requests</span></p>
+        </div>
+      </div>
+
+      <!-- Table card -->
+      <div class="table-card">
+
+        <!-- Toolbar -->
+        <div class="table-toolbar">
+          <div class="toolbar-left">
+            <div class="search-wrap">
+              <i class="bi bi-search search-icon"></i>
+              <input type="text" placeholder="Search..." oninput="filterTable(this.value)"/>
+            </div>
+            <select class="filter-select" onchange="filterByStatus(this.value)">
+              <option value="">All Status</option>
+              <option value="Approved">Approved</option>
+              <option value="Pending">Pending</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <select class="filter-select" onchange="filterByType(this.value)">
+              <option value="">All Types</option>
+              <option>Sick Leave</option>
+              <option>Casual Leave</option>
+              <option>Earned Leave</option>
+              <option>Loss of Pay</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn-today">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="opacity:.65;flex-shrink:0">
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M8 4.5V8l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+              Today
+            </button>
+            <button class="btn-primary-r" data-bs-toggle="modal" data-bs-target="#addLeaveModal">
+              <i class="bi bi-plus-lg"></i> Apply Leave
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div style="overflow-x:auto;">
+          <table class="leave-table">
+            <thead>
+              <tr>
+                <th>S.NO</th>
+                <th>Leave Type</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Reason</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="leaveTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Footer / Pagination -->
+        <div class="table-footer">
+          <p class="page-info" id="pageInfo"></p>
+          <div class="pag-btns" id="pagBtns"></div>
+        </div>
+
+      </div>
+    </main>
+  </div><!-- /app-main -->
+</div><!-- /app-wrapper -->
+
+
+<!-- ══ MODAL: Add Leave ══ -->
+<div class="modal fade" id="addLeaveModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Apply New Leave</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-r">
+          <label>Leave Type</label>
+          <select class="form-ctrl is-select" id="leaveType">
+            <option value="">Select leave type</option>
+            <option>Sick Leave</option>
+            <option>Casual Leave</option>
+            <option>Earned Leave</option>
+            <option>Loss of Pay</option>
+          </select>
+        </div>
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>From Date</label>
+              <input type="date" class="form-ctrl" id="fromDate"/>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>To Date</label>
+              <input type="date" class="form-ctrl" id="toDate"/>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>No. of Days</label>
+              <input type="text" class="form-ctrl" id="numDays" readonly placeholder="0"/>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>Remaining Days</label>
+              <input type="text" class="form-ctrl" value="6" readonly/>
+            </div>
+          </div>
+        </div>
+        <div class="form-group-r" style="margin-top:4px;">
+          <label>Reason</label>
+          <textarea class="form-ctrl" id="reason" placeholder="Enter reason for leave..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline-r" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-primary-r" onclick="submitLeave()"><i class="bi bi-check-lg"></i> Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Edit Leave ══ -->
+<div class="modal fade" id="editLeaveModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Leave Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group-r">
+          <label>Leave Type</label>
+          <select class="form-ctrl is-select" id="editType">
+            <option>Sick Leave</option>
+            <option>Casual Leave</option>
+            <option>Earned Leave</option>
+            <option>Loss of Pay</option>
+          </select>
+        </div>
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>From Date</label>
+              <input type="date" class="form-ctrl" id="editFrom"/>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group-r">
+              <label>To Date</label>
+              <input type="date" class="form-ctrl" id="editTo"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-group-r" style="margin-top:4px;">
+          <label>Reason</label>
+          <textarea class="form-ctrl" id="editReason"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline-r" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-primary-r" onclick="saveEdit()"><i class="bi bi-check-lg"></i> Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── DATA ── */
+  const allLeaves = [
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:true  },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:true  },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'01', type:'Sick Leave',   from:'01/01/2025', to:'01/01/2025', reason:'Leave na leave dhan', status:'Approved', editable:false },
+    { sno:'02', type:'Casual Leave', from:'05/02/2025', to:'06/02/2025', reason:'Personal work',       status:'Pending',  editable:true  },
+    { sno:'03', type:'Earned Leave', from:'10/03/2025', to:'12/03/2025', reason:'Family function',     status:'Rejected', editable:false },
+    { sno:'04', type:'Sick Leave',   from:'15/04/2025', to:'15/04/2025', reason:'Medical checkup',     status:'Pending',  editable:true  },
+    { sno:'05', type:'Casual Leave', from:'20/05/2025', to:'21/05/2025', reason:'Travel',              status:'Approved', editable:false },
+    { sno:'06', type:'Loss of Pay',  from:'01/06/2025', to:'02/06/2025', reason:'Absence',             status:'Approved', editable:false },
+  ];
+
+  /* ── STATE ── */
+  let filtered  = [...allLeaves];
+  let curPage   = 1;
+  const perPage = 15;
+  let searchVal = '', statusF = '', typeF = '';
+  let editIdx   = null;
+
+  /* ── RENDER ── */
+  function render() {
+    filtered = allLeaves.filter(r => {
+      const s = searchVal;
+      const matchSearch = !s ||
+        r.type.toLowerCase().includes(s) ||
+        r.reason.toLowerCase().includes(s) ||
+        r.from.includes(s) || r.to.includes(s);
+      const matchStatus = !statusF || r.status === statusF;
+      const matchType   = !typeF   || r.type   === typeF;
+      return matchSearch && matchStatus && matchType;
+    });
+
+    const total = filtered.length;
+    const pages = Math.max(1, Math.ceil(total / perPage));
+    if (curPage > pages) curPage = pages;
+    const start = (curPage - 1) * perPage;
+    const slice = filtered.slice(start, start + perPage);
+
+    /* tbody */
+    document.getElementById('leaveTableBody').innerHTML = slice.map((r, i) => {
+      const bc   = r.status === 'Approved' ? 'badge-approved' : r.status === 'Pending' ? 'badge-pending' : 'badge-rejected';
+      const edit = r.editable
+        ? `<button class="btn-edit" onclick="openEdit(${start + i})">EDIT</button>`
+        : '';
+      return `<tr>
+        <td>${r.sno}</td>
+        <td>${r.type}</td>
+        <td>${r.from}</td>
+        <td>${r.to}</td>
+        <td>${r.reason}</td>
+        <td><div class="status-cell"><span class="${bc}">${r.status}</span>${edit}</div></td>
+      </tr>`;
+    }).join('');
+
+    /* page info */
+    const end = Math.min(start + perPage, total);
+    document.getElementById('pageInfo').textContent =
+      total === 0 ? 'No results found' : `Showing ${start + 1}–${end} of ${total} entries`;
+
+    /* pagination */
+    let html = `<button class="page-btn" onclick="goPage(${curPage-1})" ${curPage===1?'disabled':''}>
+      <i class="bi bi-chevron-left" style="font-size:11px;"></i></button>`;
+    for (let p = 1; p <= pages; p++) {
+      html += `<button class="page-btn ${p===curPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    }
+    html += `<button class="page-btn" onclick="goPage(${curPage+1})" ${curPage===pages?'disabled':''}>
+      <i class="bi bi-chevron-right" style="font-size:11px;"></i></button>`;
+    document.getElementById('pagBtns').innerHTML = html;
+  }
+
+  function goPage(p) {
+    const pages = Math.max(1, Math.ceil(filtered.length / perPage));
+    if (p < 1 || p > pages) return;
+    curPage = p; render();
+  }
+  function filterTable(v)    { searchVal = v.toLowerCase(); curPage = 1; render(); }
+  function filterByStatus(v) { statusF   = v;               curPage = 1; render(); }
+  function filterByType(v)   { typeF     = v;               curPage = 1; render(); }
+
+  /* ── EDIT ── */
+  function openEdit(i) {
+    editIdx = i;
+    const r = filtered[i];
+    document.getElementById('editType').value   = r.type;
+    document.getElementById('editFrom').value   = r.from.split('/').reverse().join('-');
+    document.getElementById('editTo').value     = r.to.split('/').reverse().join('-');
+    document.getElementById('editReason').value = r.reason;
+    new bootstrap.Modal(document.getElementById('editLeaveModal')).show();
+  }
+
+  function saveEdit() {
+    if (editIdx === null) return;
+    const r = filtered[editIdx];
+    r.type   = document.getElementById('editType').value;
+    r.from   = document.getElementById('editFrom').value.split('-').reverse().join('/');
+    r.to     = document.getElementById('editTo').value.split('-').reverse().join('/');
+    r.reason = document.getElementById('editReason').value.trim() || r.reason;
+    bootstrap.Modal.getInstance(document.getElementById('editLeaveModal')).hide();
+    render();
+  }
+
+  /* ── ADD LEAVE ── */
+  const fromDate = document.getElementById('fromDate');
+  const toDate   = document.getElementById('toDate');
+  [fromDate, toDate].forEach(el => el.addEventListener('change', () => {
+    if (fromDate.value && toDate.value) {
+      const days = Math.max(0, (new Date(toDate.value) - new Date(fromDate.value)) / 86400000 + 1);
+      document.getElementById('numDays').value = days;
+    }
+  }));
+
+  function submitLeave() {
+    const type   = document.getElementById('leaveType').value;
+    const from   = fromDate.value;
+    const to     = toDate.value;
+    const reason = document.getElementById('reason').value.trim();
+    if (!type || !from || !to || !reason) { alert('Please fill all fields.'); return; }
+    const fmt = d => d.split('-').reverse().join('/');
+    allLeaves.unshift({ sno: String(allLeaves.length + 1).padStart(2,'0'), type, from: fmt(from), to: fmt(to), reason, status:'Pending', editable:true });
+    bootstrap.Modal.getInstance(document.getElementById('addLeaveModal')).hide();
+    document.getElementById('leaveType').value = '';
+    fromDate.value = ''; toDate.value = '';
+    document.getElementById('numDays').value = '';
+    document.getElementById('reason').value = '';
+    curPage = 1; render();
+  }
+
+  /* ── SIDEBAR TOGGLE ── */
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('show');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+
+  /* ── INIT ── */
+  render();
+</script>
+</body>
+</html>
